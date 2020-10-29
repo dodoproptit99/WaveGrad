@@ -253,7 +253,8 @@ if __name__ == '__main__':
     torch.backends.cudnn.enabled = True
     torch.backends.cudnn.benchmark = True
 
-    n_gpus = torch.cuda.device_count()
+    # n_gpus = torch.cuda.device_count()
+    n_gpus = 1
     args.__setattr__('n_gpus', n_gpus)
 
     if args.n_gpus > 1:
