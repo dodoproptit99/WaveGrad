@@ -198,11 +198,12 @@ def run_training(rank, config, args):
                     logger.log_audios(epoch, audios)
                     logger.log_specs(epoch, specs)
 
-                logger.save_checkpoint(
-                    iteration,
-                    model if args.n_gpus == 1 else model.module,
-                    optimizer
-                )
+                if epoch%5==0 and epoch!=0:
+                    logger.save_checkpoint(
+                        iteration,
+                        model if args.n_gpus == 1 else model.module,
+                        optimizer
+                    )
             if epoch % (epoch//10 + 1) == 0:
                 scheduler.step()
     except KeyboardInterrupt:
