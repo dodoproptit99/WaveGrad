@@ -39,7 +39,8 @@
         "n_epoch": 10000,
         "n_samples_to_test": 4,
         "test_interval": 1,
-
+        "use_fp16": true,
+        
         "training_noise_schedule": {
             "n_iter": 1000,
             "betas_range": [1e-6, 0.01]
