@@ -105,7 +105,7 @@ def run_training(rank, config, args):
             )
             for batch in (
                 tqdm(train_dataloader, leave=False) \
-                if args.verbose and rank == 0 else train_dataloader
+                if args.verbose else train_dataloader
             ):
                 model.zero_grad()
 
@@ -141,7 +141,7 @@ def run_training(rank, config, args):
                 iteration += 1
 
             # Test step after epoch on rank==0 GPU
-            if epoch % config.training_config.test_interval == 0 and rank == 0:
+            if epoch % config.training_config.test_interval == 0:
                 model.eval()
                 (model if args.n_gpus == 1 else model.module).set_new_noise_schedule(
                     init=torch.linspace,
@@ -156,7 +156,7 @@ def run_training(rank, config, args):
                     test_loss = 0
                     for i, batch in enumerate(
                         tqdm(test_dataloader) \
-                        if args.verbose and rank == 0 else test_dataloader
+                        if args.verbose else test_dataloader
                     ):
                         batch = batch.cuda()
                         mels = mel_fn(batch)
@@ -205,11 +205,12 @@ def run_training(rank, config, args):
                     logger.log_audios(epoch, audios)
                     logger.log_specs(epoch, specs)
 
-                logger.save_checkpoint(
-                    iteration,
-                    model if args.n_gpus == 1 else model.module,
-                    optimizer
-                )
+                if epoch % 5 == 0 and epoch != 0:
+                    logger.save_checkpoint(
+                        iteration,
+                        model if args.n_gpus == 1 else model.module,
+                        optimizer
+                    )
             if epoch % (epoch//10 + 1) == 0:
                 scheduler.step()
     except KeyboardInterrupt:
@@ -260,10 +261,12 @@ if __name__ == '__main__':
     torch.backends.cudnn.enabled = True
     torch.backends.cudnn.benchmark = True
 
-    n_gpus = torch.cuda.device_count()
+    #n_gpus = torch.cuda.device_count()
+    n_gpus = 1
+    rank = 0
     args.__setattr__('n_gpus', n_gpus)
 
     if args.n_gpus > 1:
         run_distributed(run_training, config, args)
     else:
-        run_training(0, config, args)
+        run_training(rank, config, args)
