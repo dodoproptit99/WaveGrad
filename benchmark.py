@@ -18,6 +18,7 @@ def compute_rtf(sample, generation_time, sample_rate=22050):
     Computes RTF for a given sample.
     """
     total_length = sample.shape[-1]
+    print("Generation time: {} - SR: {} - Total length: {}".format(generation_time, sample_rate, total_length))
     return float(generation_time * sample_rate / total_length)
 
 
