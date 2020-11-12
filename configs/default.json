@@ -26,20 +26,21 @@
         "n_mels": 80
     },
     "training_config": {
-        "logdir": "logs/default",
+        "logdir": "logs/default_2",
         "continue_training": false,
         "train_filelist_path": "filelists/train.txt",
         "test_filelist_path": "filelists/test.txt",
-        "batch_size": 96,
+        "batch_size": 48,
         "segment_length": 7200,
-        "lr": 1e-3,
+        "lr": 1e-4,
         "grad_clip_threshold": 1,
         "scheduler_step_size": 1,
         "scheduler_gamma": 0.9,
-        "n_epoch": 100000000,
+        "n_epoch": 10000,
         "n_samples_to_test": 4,
         "test_interval": 1,
-
+        "use_fp16": true,
+        
         "training_noise_schedule": {
             "n_iter": 1000,
             "betas_range": [1e-6, 0.01]
